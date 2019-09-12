@@ -130,7 +130,7 @@ class World:
         try:
             self.main_music = pyglet.resource.media('Sounds/xmasmyth.mp3')
             self.has_sound = True
-        except pyglet.media.riff.WAVEFormatException:
+        except Exception:
             if config.DEBUG:
                 print "sound is DISABLED, please install avbin"
             self.has_sound = False

@@ -50,9 +50,9 @@ class Game(pyglet.window.Window):
         font = pyglet.font.load("terminal", bold=True)
         color = (0.0, 1.0, 1.0, 1.0)
         fmt = '%(fps).1f'
-        self.fps_display = pyglet.clock.ClockDisplay(font=font,
-                                                     color=color,
-                                                     format=fmt)
+        # self.fps_display = pyglet.clock.ClockDisplay(font=font,
+        #                                              color=color,
+        #                                              format=fmt)
 
         self.keys = key.KeyStateHandler()
         self.push_handlers(self.keys)
@@ -72,7 +72,7 @@ class Game(pyglet.window.Window):
 
         self.world.draw()
 
-        self.fps_display.draw()
+        # self.fps_display.draw()
 
 
 if __name__ == '__main__':
@@ -102,5 +102,5 @@ if __name__ == '__main__':
     thinkers = [thinker_import(modname(col, f), f) for col, f in thinkers]
 
     Game(colors, thinkers)
-    pyglet.clock.set_fps_limit(60)
+    # pyglet.clock.set_fps_limit(60)
     pyglet.app.run()
