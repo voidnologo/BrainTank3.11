@@ -1,0 +1,24 @@
+ blue [0.5743]: ('COLOR:', 'blue')
+ blue [0.5744]: ('POSITION:', (0, 7))
+ blue [0.5744]: ('FACING:', UP)
+ blue [0.5744]: ('DIRECTION:', (0, -1))
+ blue [0.5744]: ('TANKS:', ['RED'])
+ blue [0.5744]: ('TANK POSITIONS:', [(9, 7)])
+ blue [0.5744]: ('TANK STATES:', [IDLE])
+ blue [0.5744]: ('FACING TO VEC(LEFT):', (-1, 0))
+ blue [0.5744]: ('RADAR:', (PLAIN, 'BLUE'))
+ blue [0.5744]: ('MEMORY:', [])
+ blue [0.5747]: ('MAP:',
+ [
+   [(GRASS, None),   (GRASS, None), (GRASS, None), (GRASS, None), (GRASS, None), (GRASS, None), (GRASS, None), (GRASS, None), (DIRT,  None), (GRASS, None)],
+   [(GRASS, None),   (DIRT,  None), (GRASS, ROCK), (GRASS, None), (GRASS, None), (GRASS, None), (GRASS, None), (DIRT,  None), (DIRT,  None), (DIRT,  None)],
+   [(GRASS, None),   (GRASS, None), (GRASS, None), (GRASS, None), (DIRT,  None), (GRASS, None), (GRASS, None), (GRASS, None), (GRASS, None), (GRASS, None)],
+   [(GRASS, None),   (WATER, None), (GRASS, None), (GRASS, None), (GRASS, None), (DIRT,  None), (DIRT,  TREE), (GRASS, None), (WATER, None), (GRASS, None)],
+   [(DIRT,  None),   (GRASS, None), (DIRT,  None), (GRASS, None), (GRASS, None), (GRASS, None), (DIRT,  None), (GRASS, None), (GRASS, TREE), (GRASS, ROCK)],
+   [(GRASS, None),   (GRASS, None), (GRASS, None), (DIRT,  None), (GRASS, TREE), (GRASS, None), (DIRT,  None), (GRASS, None), (GRASS, None), (GRASS, ROCK)],
+   [(GRASS, ROCK),   (WATER, None), (GRASS, None), (GRASS, ROCK), (GRASS, None), (GRASS, None), (DIRT,  None), (GRASS, ROCK), (GRASS, None), (GRASS, None)],
+   [(PLAIN, 'BLUE'), (DIRT,  None), (DIRT,  None), (WATER, None), (GRASS, None), (GRASS, None), (GRASS, None), (GRASS, None), (GRASS, None), (PLAIN, 'RED')]
+ ])
+ blue [0.5747]: BANG! blue is dead.
+ blue [0.5747]: GAME OVER!
+  red [0.5748]: Tank:  red  Tile:  GRASS  Item:  None

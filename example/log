@@ -1,0 +1,12 @@
+ blue [0.5956]: ('COLOR:', 'blue')
+ blue [0.5956]: ('POSITION:', (0, 0))
+ blue [0.5957]: ('FACING:', RIGHT)
+ blue [0.5957]: ('DIRECTION:', (1, 0))
+ blue [0.5957]: ('TANKS:', ['RED'])
+ blue [0.5957]: ('TANK POSITIONS:', [(9, 7)])
+ blue [0.5957]: ('TANK STATES:', [IDLE])
+ blue [0.5957]: ('FACING TO VEC(LEFT):', (-1, 0))
+ blue [0.5957]: ('RADAR:', (PLAIN, 'BLUE'))
+BANG! blue is dead.
+GAME OVER!
+  red [0.5960]: Tank:  red  Tile:  GRASS  Item:  None
