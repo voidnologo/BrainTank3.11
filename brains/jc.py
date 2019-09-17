@@ -1,31 +1,20 @@
 def relative(us, them):
-    if us[0] < them[0]:
-        x = 1
-    elif us[0] > them[0]:
-        x = -1
-    else:
-        x = 0
-
-    if us[1] < them[1]:
-        y = 1
-    elif us[1] > them[1]:
-        y = -1
-    else:
-        y = 0
-
-    return x, y
+    return us[0] - them[0], us[1] - them[1]
 
 
 def move(current_pos):
     x, y = current_pos
     dx, dy = game.direction
     tile, contents = game.radar(x + dx, y + dy)
-    if tile in game.SAFE_TILES:
+    if tile in game.SAFE_TILES and contents is None:
         game.forward()
+    else:
+        game.backward()
 
 
 game = None
 def think(g):
+    print('JC:', g.color)
     global game
     game = g
     current_pos = game.position
@@ -35,22 +24,20 @@ def think(g):
     rx, ry = relative(current_pos, other_tank)
 
     # are we facing in that direction
-    if ry == 1:
+    if ry < 0:
         if game.facing != game.DOWN:
             game.face(game.DOWN)
-            move(current_pos)
-    if ry == -1:
+    elif ry > 0:
         if game.facing != game.UP:
             game.face(game.UP)
-            move(current_pos)
-    if rx == 1:
+
+    if rx < 0:
         if game.facing != game.RIGHT:
             game.face(game.RIGHT)
-            move(current_pos)
-    if rx == -1:
+    elif rx > 0:
         if game.facing != game.LEFT:
             game.face(game.LEFT)
-            move(current_pos)
 
-    if rx == 0 or ry == 0:
+    move(current_pos)
+    if abs(rx) < 2 or abs(ry) < 2:
         game.shoot()
