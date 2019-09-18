@@ -267,19 +267,19 @@ class Tank:
                 # look for blocking items
                 if target[0] in world.blocking_tiles or target[1] in world.blocking_items:
                     self.stop()
-                    print self.color, 'tried to drive into item, stopping'
+                    print(self.color, 'tried to drive into item, stopping')
                     return
 
                 # don't move off map
                 if target[0] is None:
                     self.stop()
-                    print self.color, 'tried to drive off map, stopping'
+                    print(self.color, 'tried to drive off map, stopping')
                     return
 
                 # don't collide with another tank
                 if target[1] in world.tanks:
                     self.stop()
-                    print self.color, 'tried to ram another tank, stopping'
+                    print(self.color, 'tried to ram another tank, stopping')
                     return
 
                 # move speed adjustment
@@ -302,7 +302,7 @@ class Tank:
         return self.state is TankState.IDLE
 
     def kill(self):
-        print "BANG! %s is dead." % self.color
+        print("BANG! %s is dead." % self.color)
 
         self.state = TankState.DEAD
 

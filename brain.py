@@ -103,13 +103,13 @@ def thinker_import(name, filename=None):
     '''Import a new thinker or reload it if it exists already'''
 
     if filename:
-        if config.DEBUG: print "importing %s from %s" % (name, filename)
+        if config.DEBUG: print("importing %s from %s" % (name, filename))
         load_source(name, filename)
     elif name in sys.modules:
-        if config.DEBUG: print "reloading %s"
+        if config.DEBUG: print("reloading %s")
         reload(sys.modules[name])
     else:
-        if config.DEBUG: print "importing %s"
+        if config.DEBUG: print("importing %s")
         __import__(name)
 
     return sys.modules[name]
@@ -184,7 +184,7 @@ def thinker_think(tank, thinker):
     try:
         thinker.think(GameState())
     except Exception:
-        print 'Fatal brain error:'
+        print('Fatal brain error:')
         sys.stdout = sys.__stdout__
         traceback.print_exc()
         tank.kill()

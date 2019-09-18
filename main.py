@@ -87,7 +87,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     config.DEBUG = args.debug
     if config.DEBUG:
-        print "debugging is ENABLED!"
+        print("debugging is ENABLED!")
 
     num_tanks = len(args.thinkers)
     colors = ['blue', 'red', 'yellow']

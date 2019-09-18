@@ -132,7 +132,7 @@ class World:
             self.has_sound = True
         except Exception:
             if config.DEBUG:
-                print "sound is DISABLED, please install avbin"
+                print("sound is DISABLED, please install avbin")
             self.has_sound = False
 
     def play_music(self):
@@ -306,10 +306,10 @@ class World:
         '''Detonate (destroy) an object on the map, optionally clearing the item at pos'''
 
         if config.DEBUG:
-            print "blowing up", thing
+            print("blowing up", thing)
 
         if thing in self.tanks:
-            print "GAME OVER!"
+            print("GAME OVER!")
             self.game_over = True
 
         if pos:

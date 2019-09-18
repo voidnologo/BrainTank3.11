@@ -9,7 +9,7 @@ def think(game):
     dx, dy = game.direction
 
     tile, item = game.radar(x + dx, y + dy)
-    print "Tank: ", game.color, " Tile: ", tile, " Item: ", item
+    print("Tank: ", game.color, " Tile: ", tile, " Item: ", item)
 
     if tile is None or tile is game.WATER or item is not None:
         if game.facing is game.UP:
