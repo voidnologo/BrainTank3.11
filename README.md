@@ -18,14 +18,8 @@ To run it just execute `main.py` with python.
   * Driving into __water__ will destroy the tank.
 
 ## Making a Brain
-Copy `brains/wander.py` to `brains/yourname.py` and add "yourname" to config.py.
-For now it will only read the first two brains listed.
-There is a small guide that describes what this brain does and what is available for brains to use in wander.py.
-
-## TODO
-  1. Add explosions and other animations.
-  2. Make sound effects for actions.
-  3. Add GUI elements like victory screen, etc.
+Copy `brains/wander.py` to `brains/yourname.py`.
+Make sure you have a `think()` function.  This is the hook that will be executed by the program.
 
 ## Requirements
   * [Pyglet](http://pyglet.org/)
@@ -43,4 +37,4 @@ The code is GPLv3, but the art/sound is not.
   * The Planet Cute sprites are from the venerable Danc. Check out his [site](http://www.lostgarden.com).
   * The tank is by Saypen on [Open Game Art](http://opengameart.org/content/american-tank).
   * The Main song is by Mister Electric Demon on [Jamendo](http://www.jamendo.com/en/album/7686).
-  * Everything else I've made and is in the public domain.
+  * This is a fork from [pysfg/BrainTank](https://github.com/pysgf/BrainTank) updated to run with python3.
