@@ -19,18 +19,21 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###############################################################################
+import os
+import random
 
-import pyglet
 from pyglet.window import key
+import pyglet
 import pyglet.gl as gl
-import os, random
-from tank import Tank
+
 from symbols import Facing, Tile, Item
+from tank import Tank
 import config
 
 
 class VoidKill(Exception):
     pass
+
 
 class Drawable:
     def __init__(self, name, filename):
@@ -41,7 +44,7 @@ class Drawable:
         self.img.blit(*args, **kwargs)
 
     def __repr__(self):
-        return "Drawable(%s)" % self.name
+        return f'Drawable({self.name})'
 
 
 class World:
@@ -67,37 +70,36 @@ class World:
 
     def get_tile(self, x, y):
         '''Returns a (tile, item) tuple.
-           tile will be a type:
-               world.grass, dirt, etc
-           item will be None or an item:
-               world.rock, tree, etc
-           '''
-        if not(x >= 0 and x < self.width):
+        tile will be a type:
+            world.grass, dirt, etc
+        item will be None or an item:
+            world.rock, tree, etc
+        '''
+        if not (x >= 0 and x < self.width):
             return (None, None)
 
-        if not(y >= 0 and y < self.height):
+        if not (y >= 0 and y < self.height):
             return (None, None)
 
         return self.__map[y][x]
 
     def get_tile_enum(self, x, y):
         '''Returns a (tile, item) tuple in enum form.
-            tile will be a value from symbols.Tile
-            item will be a value from symbols.Item'''
+        tile will be a value from symbols.Tile
+        item will be a value from symbols.Item'''
 
-        tile, item = self.get_tile(x,y)
+        tile, item = self.get_tile(x, y)
         return self.TILE_TO_ENUM[tile], self.ITEM_TO_ENUM[item]
 
     def load_resources(self):
-
         def load(name):
-            pack = "PlanetCute PNG"
-            return Drawable(name, '%s/%s.png' % (pack, name))
+            pack = 'PlanetCute PNG'
+            return Drawable(name, f'{pack}/{name}.png')
 
         self.grass = load('Grass Block')
         self.dirt = load('Dirt Block')
-        #self.wall = load('Stone Block Tall')
-        #self.brown = load('Brown Block')
+        # self.wall = load('Stone Block Tall')
+        # self.brown = load('Brown Block')
         self.plain = load('Plain Block')
         self.water = load('Water Block')
 
@@ -107,12 +109,12 @@ class World:
         self.tiles = self.safe + self.unsafe
         self.blocking_tiles = []
 
-        #self.spawn = load('Selector')
+        # self.spawn = load('Selector')
         self.rock = load('Rock')
         self.tree = load('Tree Tall')
-        #self.bush = load('Tree Short')
-        #self.heart = load('Heart')
-        #self.gem = load('Gem Blue')
+        # self.bush = load('Tree Short')
+        # self.heart = load('Heart')
+        # self.gem = load('Gem Blue')
 
         self.items = (self.rock, self.tree)
         self.blocking_items = self.items
@@ -123,9 +125,9 @@ class World:
 
         self.half_stack = 43
         self.tile_size = (101, -81)
-        self.tile_size_inv = (1.0/self.tile_size[0], 1.0/self.tile_size[1])
+        self.tile_size_inv = (1.0 / self.tile_size[0], 1.0 / self.tile_size[1])
         self.start_x = 0
-        self.start_y = (self.height-1) * -self.tile_size[1]
+        self.start_y = (self.height - 1) * -self.tile_size[1]
 
         try:
             self.main_music = pyglet.resource.media('Sounds/xmasmyth.mp3')
@@ -139,14 +141,14 @@ class World:
         self.main_music.play()
 
     def generate_map(self):
-        self.__map = [[(self.grass, None)]*self.width for x in range(self.height)]
+        self.__map = [[(self.grass, None)] * self.width for x in range(self.height)]
 
         def distmap(pairs):
-            return [i for sublist in [[x]*y for x,y in pairs] for i in sublist]
+            return [i for sublist in [[x] * y for x, y in pairs] for i in sublist]
 
         # spawn lists
         terrain = distmap(((self.grass, 20), (self.dirt, 5), (self.water, 1)))
-        items = distmap(((None, 20), (self.rock,2), (self.tree,2)))
+        items = distmap(((None, 20), (self.rock, 2), (self.tree, 2)))
 
         # generate actual map
         r = self.rand
@@ -154,58 +156,60 @@ class World:
             for i in range(len(row)):
                 tile = r.choice(terrain)
                 item = None
-                if tile in self.safe: # avoid water etc for placeables
+                if tile in self.safe:  # avoid water etc for placeables
                     item = r.choice(items)
 
                 row[i] = (tile, item)
 
-        self.ITEM_TO_ENUM.update({
-            None:      None,
-            self.rock: Item.ROCK,
-            self.tree: Item.TREE,
-        })
+        self.ITEM_TO_ENUM.update(
+            {
+                None: None,
+                self.rock: Item.ROCK,
+                self.tree: Item.TREE,
+            }
+        )
 
-        self.TILE_TO_ENUM.update({
-            None:       None,
-            self.grass: Tile.GRASS,
-            self.dirt:  Tile.DIRT,
-            self.plain: Tile.PLAIN,
-            self.water: Tile.WATER,
-        })
+        self.TILE_TO_ENUM.update(
+            {
+                None: None,
+                self.grass: Tile.GRASS,
+                self.dirt: Tile.DIRT,
+                self.plain: Tile.PLAIN,
+                self.water: Tile.WATER,
+            }
+        )
 
     def add_tanks(self, tank_colors):
         s1 = (0, 0, Facing.RIGHT)
-        s2 = (0, self.height-1, Facing.UP)
-        s3 = (self.width-1, self.height-1, Facing.LEFT)
-        s4 = (self.width-1, 0, Facing.DOWN)
+        s2 = (0, self.height - 1, Facing.UP)
+        s3 = (self.width - 1, self.height - 1, Facing.LEFT)
+        s4 = (self.width - 1, 0, Facing.DOWN)
 
-        spawns = self.rand.sample((s1,s2,s3,s4), len(tank_colors))
+        spawns = self.rand.sample((s1, s2, s3, s4), len(tank_colors))
 
         self.tanks = []
-        for spawn,color in zip(spawns, tank_colors):
+        for spawn, color in zip(spawns, tank_colors):
             tank = Tank(self, spawn[0], spawn[1], spawn[2], color)
             self.__set_tile(spawn, (self.plain, tank))
             self.tanks.append(tank)
 
-        self.ITEM_TO_ENUM.update({
-            x: x.color.upper() for x in self.tanks
-        })
+        self.ITEM_TO_ENUM.update({x: x.color.upper() for x in self.tanks})
 
     def __set_tile(self, pos, data):
-        #print "setting", pos, data
+        # print "setting", pos, data
         self.__map[pos[1]][pos[0]] = data
 
     def world_to_screen(self, x, y):
         '''Convert tile coordinates to screen pixel coordinates'''
         x = self.start_x + x * self.tile_size[0]
-        y = self.start_y + (y-1) * self.tile_size[1]
-        return (x,y)
+        y = self.start_y + (y - 1) * self.tile_size[1]
+        return (x, y)
 
     def screen_to_world(self, x, y):
         '''Convert screen pixel coordinates to tile coordinates'''
         x = (x - self.start_x) * self.tile_size_inv[0]
         y = (y - self.start_y) * self.tile_size_inv[1] + 1
-        return (int(x),int(y))
+        return (int(x), int(y))
 
     def draw(self):
         gl.glEnable(gl.GL_BLEND)
@@ -221,8 +225,8 @@ class World:
         x, y = self.start_x, self.start_y
         for row in self.__map:
             x = self.start_x
-            for tile,item in row:
-                tile.blit(x,y,0)
+            for tile, item in row:
+                tile.blit(x, y, 0)
                 x += dx
             y += dy
 
@@ -235,9 +239,9 @@ class World:
         x, y = self.start_x, self.start_y
         for row in self.__map:
             x = self.start_x
-            for tile,item in row:
+            for tile, item in row:
                 if item is not None:
-                    item.blit(x,y+stack,1)
+                    item.blit(x, y + stack, 1)
                 x += dx
             y += dy
 
@@ -269,20 +273,20 @@ class World:
             dead_bullets = []
             for bullet in self.bullets:
                 bullet.update(dt)
-                x,y = self.screen_to_world(bullet.x, bullet.y)
-                tile, item = self.get_tile(x,y)
-                #print "bullet at", x, y, "facing", bullet.facing
+                x, y = self.screen_to_world(bullet.x, bullet.y)
+                tile, item = self.get_tile(x, y)
+                # print "bullet at", x, y, "facing", bullet.facing
                 if x < 0 or y < 0 or x >= self.width or y >= self.height:
                     dead_bullets.append(bullet)
                 elif item in self.destructible:
-                    self.detonate(item, pos=(x,y))
+                    self.detonate(item, pos=(x, y))
                     dead_bullets.append(bullet)
-                #else:
-                    #self.__set_tile((x,y), (tile, self.spawn))
+                # else:
+                # self.__set_tile((x,y), (tile, self.spawn))
 
             for bullet in dead_bullets:
                 self.bullets.remove(bullet)
-                bullet.tank.bullet = None # bleh
+                bullet.tank.bullet = None  # bleh
                 self.detonate(bullet)
 
             # update tanks
@@ -297,7 +301,7 @@ class World:
                 trect = tank.rect()
 
                 for bullet in self.bullets:
-                    #print "checking", tank.color, "against", bullet.tank.color, "'s bullet"
+                    # print "checking", tank.color, "against", bullet.tank.color, "'s bullet"
                     if bullet.tank is not tank and bullet.rect().touches(trect):
                         tank.kill()
                         self.detonate(tank)
@@ -318,4 +322,3 @@ class World:
 
     def add_bullet(self, bullet):
         self.bullets.append(bullet)
-

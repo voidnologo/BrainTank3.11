@@ -19,14 +19,17 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###############################################################################
+import os
+import random
 
-import pyglet
 from pyglet.window import key
+import pyglet
 import pyglet.gl as gl
-import os, random
-from utils import Animation, Rect
+
 from brain import Brain
 from symbols import Command, TankState, Facing, FACING_TO_VEC
+from utils import Animation, Rect
+
 
 class Bullet:
     '''Represents a moving bullet with facing'''
@@ -58,18 +61,16 @@ class Bullet:
             pass
 
     def __repr__(self):
-        return "Bullet(%s)" % self.tank.color
+        return f'Bullet({self.tank.color})'
 
     def rect(self):
         '''Returns a Rect suitable for collision detection'''
-        return Rect(self.x-self.hw, self.y-self.hh, self.img.width, self.img.height)
+        return Rect(self.x - self.hw, self.y - self.hh, self.img.width, self.img.height)
 
     def draw(self):
-        #print "drawing bullet at", self.x, self.y
+        # print "drawing bullet at", self.x, self.y
         hw, hh = self.hw, self.hh
         self.img.blit(self.x, self.y)
-
-        #self.rect().debug_draw()
 
     def update(self, dt):
         step = self.speed * dt
@@ -82,12 +83,12 @@ class Tank:
     '''Draws and handles tank actions.'''
 
     def __init__(self, world, x, y, facing, color):
-        self.set_position(x,y)
+        self.set_position(x, y)
         self.facing = facing
         self.color = color
 
-        self.offset_dt = (0,0)
-        self.offset = (0,0)
+        self.offset_dt = (0, 0)
+        self.offset = (0, 0)
 
         self.state = TankState.IDLE
         self.driving_forward = True
@@ -99,19 +100,19 @@ class Tank:
 
         # speed is per second
         self.speed = 100
-        self.reduced_speed = self.speed *0.5
+        self.reduced_speed = self.speed * 0.5
 
         self.load_resources()
 
     def __str__(self):
-        return "%s tank" % self.color
+        return f'{self.color} tank'
 
     def __repr__(self):
-        return "Tank(%s)" % self.color
+        return f'Tank({self.color})'
 
     def rect(self):
         '''Returns a Rect suitable for collision'''
-        x,y = self.world.world_to_screen(self.x, self.y)
+        x, y = self.world.world_to_screen(self.x, self.y)
         x += self.offset[0]
         y += self.offset[1] - self.world.half_stack
         return Rect(x, y, self.world.tile_size[0], -self.world.tile_size[1])
@@ -139,11 +140,8 @@ class Tank:
         self.warp_y = None
 
     def load_resources(self):
-
-        def load(dir):
-            pack = "tank"
-            col = self.color
-            return pyglet.resource.image('%s/%s_%s.png' % (pack, col, dir))
+        def load(direction):
+            return pyglet.resource.image(f'tank/{self.color}_{direction}.png')
 
         self.up = load('up')
         self.down = load('down')
@@ -157,25 +155,25 @@ class Tank:
 
         # lookup table for bullet facing
         self.bullet_facing_img = {
-            Facing.UP:    img.get_transform(rotate=0),
+            Facing.UP: img.get_transform(rotate=0),
             Facing.RIGHT: img.get_transform(rotate=90),
-            Facing.DOWN:  img.get_transform(rotate=180),
-            Facing.LEFT:  img.get_transform(rotate=270),
+            Facing.DOWN: img.get_transform(rotate=180),
+            Facing.LEFT: img.get_transform(rotate=270),
         }
 
         # lookup table for tank facing
         self.tank_facing_img = {
-            Facing.UP:    self.up,
+            Facing.UP: self.up,
             Facing.RIGHT: self.right,
-            Facing.DOWN:  self.down,
-            Facing.LEFT:  self.left,
+            Facing.DOWN: self.down,
+            Facing.LEFT: self.left,
         }
 
     def blit(self, x, y, z):
         x += self.offset[0]
         y += self.offset[1]
         self.tank_facing_img[self.facing].blit(x, y, z)
-        #self.rect().debug_draw()
+        # self.rect().debug_draw()
 
     def read_command(self):
         '''Pop a command from the brain memory and interpret it'''
@@ -186,7 +184,7 @@ class Tank:
                 self.state = TankState.MOVING
                 self.offset_dt = FACING_TO_VEC[self.facing]
 
-                self.driving_forward = (command is Command.FORWARD)
+                self.driving_forward = command is Command.FORWARD
 
                 end = self.world.tile_size[0]
                 if self.facing in (Facing.DOWN, Facing.UP):
@@ -196,7 +194,7 @@ class Tank:
 
             if command in (Facing.UP, Facing.DOWN, Facing.LEFT, Facing.RIGHT):
                 self.state = TankState.TURNING
-                self.turn_to = command # bleh
+                self.turn_to = command  # bleh
 
                 time_to_turn = 1.0
                 if command in (Facing.UP, Facing.DOWN):
@@ -213,12 +211,12 @@ class Tank:
                 self.animation = Animation(0, time_to_turn, 1.0)
 
             if command is Command.SHOOT and self.bullet is None:
-                #print self.color, 'is SHOOTING'
+                # print self.color, 'is SHOOTING'
                 self.state = TankState.SHOOTING
 
     def stop(self):
         '''Stop current state and return to idle.'''
-        self.offset = (0,0)
+        self.offset = (0, 0)
         self.animation = None
         self.state = TankState.IDLE
 
@@ -251,17 +249,17 @@ class Tank:
 
             sign = 1 if self.driving_forward else -1
 
-            if anim.done: # done moving, warp to final destination
-               # set up a warp
-               self.warp_x = self.x + dt[0]*sign
-               self.warp_y = self.y + dt[1]*sign
+            if anim.done:  # done moving, warp to final destination
+                # set up a warp
+                self.warp_x = self.x + dt[0] * sign
+                self.warp_y = self.y + dt[1] * sign
 
-               world.warp(self)
-               self.set_position(self.warp_x, self.warp_y)
-               self.stop()
+                world.warp(self)
+                self.set_position(self.warp_x, self.warp_y)
+                self.stop()
 
-            else: # still moving
-                target = world.get_tile(self.x+dt[0]*sign, self.y+dt[1]*sign)
+            else:  # still moving
+                target = world.get_tile(self.x + dt[0] * sign, self.y + dt[1] * sign)
                 current = world.get_tile(self.x, self.y)
 
                 # look for blocking items
@@ -283,31 +281,27 @@ class Tank:
                     return
 
                 # move speed adjustment
-                jitter = (0,0)
+                jitter = (0, 0)
                 ri = random.randint
                 progress = anim.unit()
                 anim.speed = self.speed
                 if current[0] is world.dirt and progress < 0.5:
                     anim.speed = self.reduced_speed
-                    jitter = (ri(-1,1),ri(0,2))
+                    jitter = (ri(-1, 1), ri(0, 2))
                 if target[0] is world.dirt and progress > 0.5:
                     anim.speed = self.reduced_speed
-                    jitter = (ri(-1,1),ri(0,2))
+                    jitter = (ri(-1, 1), ri(0, 2))
 
-                self.offset = (dt[0]*anim.value*sign+jitter[0],
-                               -dt[1]*anim.value*sign+jitter[1])
-
+                self.offset = (dt[0] * anim.value * sign + jitter[0], -dt[1] * anim.value * sign + jitter[1])
 
     def is_idle(self):
         return self.state is TankState.IDLE
 
     def kill(self):
-        print("BANG! %s is dead." % self.color)
+        print(f'BANG! {self.color} is dead.')
 
         self.state = TankState.DEAD
 
         if self.brain:
             self.brain.detach()
             self.world.detonate(self)
-
-

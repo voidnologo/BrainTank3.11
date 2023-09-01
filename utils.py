@@ -20,7 +20,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###############################################################################
 
-import sys, time
+import sys
+import time
 
 
 class Enum(object):
@@ -42,35 +43,35 @@ class Enum(object):
 
 
 class Rect:
-    def __init__(self, x, y, w, h):
+    def __init__(self, x, y, width, height):
         self.x = x
         self.y = y
-        self.w = w
-        self.h = h
+        self.width = width
+        self.height = height
 
     def touches(self, o):
-        if o.x + o.w < self.x:
+        if o.x + o.width < self.x:
             return False
-        if o.y + o.h < self.y:
+        if o.y + o.height < self.y:
             return False
-        if o.x > self.x + self.w:
+        if o.x > self.x + self.width:
             return False
-        if o.y > self.y + self.h:
+        if o.y > self.y + self.height:
             return False
 
         return True
 
     def __repr__(self):
-        return "Rect(%s, %s, %s, %s)" % (self.x, self.y, self.w, self.h)
+        return f'Rect({self.x}, {self.y}, {self.width}, {self.height})'
 
     def debug_draw(self):
         import pyglet
         import pyglet.gl as gl
 
-        x, y, w, h = self.x, self.y, self.w, self.h
+        x, y, width, height = self.x, self.y, self.width, self.height
         vertex_list = pyglet.graphics.vertex_list(
             4,
-            ('v2f', (x, y, x + w, y, x + w, y + h, x, y + h)),
+            ('v2f', (x, y, x + width, y, x + width, y + height, x, y + height)),
             ('c3B', (255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0)),
         )
         vertex_list.draw(gl.GL_LINE_LOOP)
@@ -96,7 +97,7 @@ class Animation:
                 self.done = True
 
     def __str__(self):
-        return "Animation at %.2f of %.2f (+%.2f)" % (self.value, self.stop, self.speed)
+        return f'Animation at {self.value:.2f} of {self.stop:.2f} (+{self.speed:.2f})'
 
 
 class DebugWriter:
@@ -107,7 +108,7 @@ class DebugWriter:
 
     def write(self, msg):
         if self.newline:
-            s = "%5s [%4.4f]: %s" % (self.label, time.process_time(), msg)
+            s = f'{self.label:>5} [{time.process_time():4.4f}]: {msg}'
             self.newline = False
         else:
             s = str(msg)
