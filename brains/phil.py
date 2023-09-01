@@ -40,16 +40,15 @@ def turn_around(game):
 
 
 def think(game):
-
     x, y = game.position
     dx, dy = game.direction
 
     tile, item = game.radar(x + dx, y + dy)
 
-    print "Tank: ", game.color, " Tile: ", tile, " Item: ", item
+    print("Tank: ", game.color, " Tile: ", tile, " Item: ", item)
 
     if tile is None or tile is game.WATER or item is not None:
-        print game.memory
+        print(game.memory)
         turn_around(game)
     else:
         game.forward()

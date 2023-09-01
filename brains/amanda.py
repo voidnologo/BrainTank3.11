@@ -74,37 +74,37 @@ import random
 
 counter = 1
 
-def think(game):
 
+def think(game):
     x, y = game.position
     dx, dy = game.direction
 
     global counter
-#     print "counter is", counter
+    #     print("counter is", counter)
     counter += 1
 
     tile, item = game.radar(x + dx, y + dy)
-#     print "at", x, y, "and facing", game.facing
-#     print "will be moving into:", tile, item
+    #     print("at", x, y, "and facing", game.facing)
+    #     print("will be moving into:", tile, item)
 
     def new_facing_def():
         # out of all facing possibilities, choose one we don't have currently
-#         new_facing = [game.UP, game.DOWN, game.LEFT, game.RIGHT]
-#         new_facing.remove(game.facing)
-        print game.tank_positions
+        #         new_facing = [game.UP, game.DOWN, game.LEFT, game.RIGHT]
+        #         new_facing.remove(game.facing)
+        print(game.tank_positions)
         enemy = game.tank_positions[0]
-        #Randomly decide to move either vertically or horizontally
-        mynum = random.randint(0,1)
-        print "MY NUM: %s" % mynum
+        # Randomly decide to move either vertically or horizontally
+        mynum = random.randint(0, 1)
+        print(f'MY NUM: {mynum}')
         vertical = False
         if mynum == 0:
-            #Move horizontal
+            # Move horizontal
             if game.position[0] > enemy[0]:
                 new_facing = [game.LEFT]
             elif game.position[0] < enemy[0]:
                 new_facing = [game.RIGHT]
             else:
-                #We are on the same row, move vertical
+                # We are on the same row, move vertical
                 vertical = True
 
         if mynum == 1 or vertical:
@@ -123,8 +123,8 @@ def think(game):
             if ni is None and nt not in (None, game.WATER):
                 good_facing.append(f)
 
-        print "GOOD FACING : %s" % good_facing
-        print "NEW FACING : %s" % new_facing
+        print(f"GOOD FACING : {good_facing}")
+        print(f"NEW FACING : {new_facing}")
 
         if game.facing in good_facing:
             game.shoot()
@@ -146,7 +146,7 @@ def think(game):
         for f in new_facing:
             v = game.FACING_TO_VEC[f]
             nt, ni = game.radar(x + v[0], y + v[1])
-            print nt, ni
+            print(nt, ni)
             if ni is None and nt not in (None, game.WATER):
                 good_facing.append(f)
 
@@ -159,18 +159,16 @@ def think(game):
         game.face(x)
         game.shoot()
 
-    elif random.randint(0,2) == 0:
+    elif random.randint(0, 2) == 0:
         # 1 out of 5 times choose a new direction
         x = new_facing_def()
         game.face(x)
         game.shoot()
 
-    if random.randint(0,2) == 0:
+    if random.randint(0, 2) == 0:
         game.shoot()
 
     if game.FORWARD not in game.memory:
         game.forward()
 
-
-    print "brain queue:", game.memory
-
+    print("brain queue:", game.memory)

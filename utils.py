@@ -22,6 +22,7 @@
 
 import sys, time
 
+
 class Enum(object):
     '''Crappy enum emulator'''
 
@@ -38,6 +39,7 @@ class Enum(object):
             item = Enum.Item(name)
             setattr(self, name, item)
             self.values.append(item)
+
 
 class Rect:
     def __init__(self, x, y, w, h):
@@ -65,10 +67,11 @@ class Rect:
         import pyglet
         import pyglet.gl as gl
 
-        x,y,w,h = self.x, self.y, self.w, self.h
-        vertex_list = pyglet.graphics.vertex_list(4,
-            ('v2f', (x,y, x+w,y, x+w,y+h, x,y+h)),
-            ('c3B', (255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0))
+        x, y, w, h = self.x, self.y, self.w, self.h
+        vertex_list = pyglet.graphics.vertex_list(
+            4,
+            ('v2f', (x, y, x + w, y, x + w, y + h, x, y + h)),
+            ('c3B', (255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0)),
         )
         vertex_list.draw(gl.GL_LINE_LOOP)
 
@@ -104,13 +107,12 @@ class DebugWriter:
 
     def write(self, msg):
         if self.newline:
-            s = "%5s [%4.4f]: %s" % (self.label, time.clock(), msg)
+            s = "%5s [%4.4f]: %s" % (self.label, time.process_time(), msg)
             self.newline = False
         else:
-            s = "%s" % msg
+            s = str(msg)
 
         if msg.find('\n') != -1:
             self.newline = True
 
         self.sink.write(s)
-

@@ -4,11 +4,11 @@ This is a little project to teach programming skills as well as basic AI.
 To run it just execute main.py with python.
 
 ## Simulation Rules
-Every time a trank becomes "idle" it will run the `think()` function associated
-with that brain to queue up more commands. 
+Every time a tank becomes "idle" it will run the `think()` function associated
+with that brain to queue up more commands.
 The tank then executes these, which can take a variable amount of time.
-Tanks can also fire shots in the direction they are facing. 
-They must turn to aim. 
+Tanks can also fire shots in the direction they are facing.
+They must turn to aim.
 Turning one facing takes half a second, turning twice takes one second.
 The shots move at twice the speed of a tank.
 
@@ -21,7 +21,7 @@ The shots move at twice the speed of a tank.
 ## Making a Brain
 Copy brains/wander.py to brains/yourname.py and add "yourname" it to config.py.
 For now it will only read the first two brains listed.
-There is a small guide that describes what this brain does and what is 
+There is a small guide that describes what this brain does and what is
 available for brains to use in wander.py.
 
 ## TODO
@@ -30,10 +30,9 @@ available for brains to use in wander.py.
   3. Add GUI elements like victory screen, etc.
 
 ## Requirements
-  * [Python 2.7+](http://www.python.org/) - does NOT run on Python 3.
   * [Pyglet](http://pyglet.org/)
     * Windows users should use [pip](http://www.pip-installer.org/) to install.
-    * OSX users should use [this fork](http://code.google.com/r/evilphillip-cocoa-ctypes/) 
+    * OSX users should use [this fork](http://code.google.com/r/evilphillip-cocoa-ctypes/)
       * If you have pip: `pip install https://github.com/downloads/pysgf/BrainTank/pyglet-evilphillip-cocoa-ctypes.tar.bz2`
     * Ubuntu
       * If you have pip: `pip install pyglet`
