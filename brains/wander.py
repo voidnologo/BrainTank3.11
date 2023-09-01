@@ -74,19 +74,20 @@ import random
 
 counter = 1
 
+
 def think(game):
-    #forget() # clear old commands
+    # forget() # clear old commands
 
     x, y = game.position
     dx, dy = game.direction
 
     global counter
-    print "counter is", counter
+    print('counter is', counter)
     counter += 1
 
     tile, item = game.radar(x + dx, y + dy)
-    print "at", x, y, "and facing", game.facing
-    print "will be moving into:", tile, item
+    print('at', x, y, 'and facing', game.facing)
+    print('will be moving into:', tile, item)
 
     def new_facing():
         # out of all facing possibilities, choose one we don't have currently
@@ -105,18 +106,17 @@ def think(game):
 
     # avoid moving into blocking items
     if item is not None or tile in (game.WATER, None):
-        game.forget() # clear possibly bad commands
+        game.forget()  # clear possibly bad commands
         game.face(new_facing())
-    elif random.randint(0,5) == 0:
+    elif random.randint(0, 5) == 0:
         # 1 out of 5 times choose a new direction
         game.face(new_facing())
 
     if game.FORWARD not in game.memory:
         game.forward()
 
-    if random.randint(0,3) == 0:
+    if random.randint(0, 3) == 0:
         # 1 out of 3 times try to shoot
         game.shoot()
 
-    print "brain queue:", game.memory
-
+    print('brain queue:', game.memory)

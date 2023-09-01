@@ -27,6 +27,7 @@ from symbols import Tile, Item, Facing, TankState, Command, FACING_TO_VEC
 from imp import load_source
 import config
 
+
 class Brain:
     '''The Brain is your primary interface to write a custom tank AI.'''
 
@@ -61,17 +62,17 @@ class Brain:
 
     def forward(self):
         '''Queue the command to move the tank forward.
-           The direction depends on the tank's current facing.'''
+        The direction depends on the tank's current facing.'''
         self.memory.append(Command.FORWARD)
 
     def backward(self):
         '''Queue the command to move the tank backward.
-           The direction depends on the tank's current facing.'''
+        The direction depends on the tank's current facing.'''
         self.memory.append(Command.BACKWARD)
 
     def shoot(self):
         '''Queue a shoot command.
-           The direction depends on the tank's current facing.'''
+        The direction depends on the tank's current facing.'''
         self.memory.append(Command.SHOOT)
 
     def position(self):
@@ -80,18 +81,18 @@ class Brain:
 
     def facing(self):
         '''Return the facing of the tank.
-           It returns Facing.UP, Facing.DOWN, etc.'''
+        It returns Facing.UP, Facing.DOWN, etc.'''
         return self.tank.get_facing()
 
     def direction(self):
         '''Return the facing of the tank.
-           It returns (dx,dy) pointing in the direction the tank is.'''
+        It returns (dx,dy) pointing in the direction the tank is.'''
         return self.tank.get_facing_vector()
 
     def radar(self, x, y):
         '''Return the tile information for a given coordinate.
-           Returns (terrain, item). If no terrain or item, it uses None.
-           See the World docs for some terrain types.'''
+        Returns (terrain, item). If no terrain or item, it uses None.
+        See the World docs for some terrain types.'''
         return self.tank.world.get_tile_enum(x, y)
 
     def kill(self):
@@ -103,13 +104,16 @@ def thinker_import(name, filename=None):
     '''Import a new thinker or reload it if it exists already'''
 
     if filename:
-        if config.DEBUG: print("importing %s from %s" % (name, filename))
+        if config.DEBUG:
+            print(f'importing {name} from {filename}')
         load_source(name, filename)
     elif name in sys.modules:
-        if config.DEBUG: print("reloading %s")
+        if config.DEBUG:
+            print('reloading %s')
         reload(sys.modules[name])
     else:
-        if config.DEBUG: print("importing %s")
+        if config.DEBUG:
+            print('importing %s')
         __import__(name)
 
     return sys.modules[name]
@@ -123,58 +127,56 @@ def thinker_think(tank, thinker):
     game = {}
 
     # vars
-    game["color"] = tank.color
-    game["position"] = brain.position()
-    game["facing"] = brain.facing()
-    game["direction"] = brain.direction()
-    game["shots_fired"] = tank.shots
+    game['color'] = tank.color
+    game['position'] = brain.position()
+    game['facing'] = brain.facing()
+    game['direction'] = brain.direction()
+    game['shots_fired'] = tank.shots
 
     other_tanks = [x for x in world.tanks if x is not tank]
-    game["tanks"] = [world.ITEM_TO_ENUM[x] for x in other_tanks]
-    game["tank_positions"] = [x.get_position() for x in other_tanks]
-    game["tank_states"] = [x.state for x in other_tanks]
+    game['tanks'] = [world.ITEM_TO_ENUM[x] for x in other_tanks]
+    game['tank_positions'] = [x.get_position() for x in other_tanks]
+    game['tank_states'] = [x.state for x in other_tanks]
 
-    game["memory"] = deepcopy(brain.memory)
+    game['memory'] = deepcopy(brain.memory)
 
     # symbols
-    game["UP"] = Facing.UP
-    game["DOWN"] = Facing.DOWN
-    game["LEFT"] = Facing.LEFT
-    game["RIGHT"] = Facing.RIGHT
-    game["SHOOT"] = Command.SHOOT
-    game["FORWARD"] = Command.FORWARD
-    game["BACKWARD"] = Command.BACKWARD
+    game['UP'] = Facing.UP
+    game['DOWN'] = Facing.DOWN
+    game['LEFT'] = Facing.LEFT
+    game['RIGHT'] = Facing.RIGHT
+    game['SHOOT'] = Command.SHOOT
+    game['FORWARD'] = Command.FORWARD
+    game['BACKWARD'] = Command.BACKWARD
 
-    game["IDLE"] = TankState.IDLE
-    game["MOVING"] = TankState.MOVING
-    game["SHOOTING"] = TankState.SHOOTING
-    game["TURNING"] = TankState.TURNING
-    game["DEAD"] = TankState.DEAD
+    game['IDLE'] = TankState.IDLE
+    game['MOVING'] = TankState.MOVING
+    game['SHOOTING'] = TankState.SHOOTING
+    game['TURNING'] = TankState.TURNING
+    game['DEAD'] = TankState.DEAD
 
-    game["GRASS"] = Tile.GRASS
-    game["DIRT"] = Tile.DIRT
-    game["PLAIN"] = Tile.PLAIN
-    game["WATER"] = Tile.WATER
+    game['GRASS'] = Tile.GRASS
+    game['DIRT'] = Tile.DIRT
+    game['PLAIN'] = Tile.PLAIN
+    game['WATER'] = Tile.WATER
 
-    game["SAFE_TILES"] = [world.TILE_TO_ENUM[x] for x in world.safe]
-    game["UNSAFE_TILES"] = [world.TILE_TO_ENUM[x] for x in world.unsafe]
+    game['SAFE_TILES'] = [world.TILE_TO_ENUM[x] for x in world.safe]
+    game['UNSAFE_TILES'] = [world.TILE_TO_ENUM[x] for x in world.unsafe]
 
-    game["ROCK"] = Item.ROCK
-    game["TREE"] = Item.TREE
+    game['ROCK'] = Item.ROCK
+    game['TREE'] = Item.TREE
 
     # lookup tables
-    game["FACING_TO_VEC"] = {
-        x: FACING_TO_VEC[x] for x in Facing.values
-    }
+    game['FACING_TO_VEC'] = {x: FACING_TO_VEC[x] for x in Facing.values}
 
     # functions
-    game["forget"] = brain.forget
-    game["face"] = brain.face
-    game["forward"] = brain.forward
-    game["backward"] = brain.backward
-    game["shoot"] = brain.shoot
-    game["radar"] = brain.radar
-    game["kill"] = brain.kill
+    game['forget'] = brain.forget
+    game['face'] = brain.face
+    game['forward'] = brain.forward
+    game['backward'] = brain.backward
+    game['shoot'] = brain.shoot
+    game['radar'] = brain.radar
+    game['kill'] = brain.kill
 
     sys.stdout = DebugWriter(tank.color)
 
@@ -190,4 +192,3 @@ def thinker_think(tank, thinker):
         tank.kill()
 
     sys.stdout = sys.__stdout__
-

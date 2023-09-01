@@ -34,46 +34,47 @@ This would give the brain a memory :)
 2) Some of the logic could be turned into additional functions, making manteniance a bit easier.
 
 '''
+
+
 class Intelligence(object):
     def __init__(self):
         self.world_dimension_x = 10
         self.world_dimension_y = 8
 
-    def tile_safe(self,game,direction):
-        ''' returns True if tile is safe to enter, returns False if it is not, fires if it contains an obstacle, then returns True
-        '''
+    def tile_safe(self, game, direction):
+        '''returns True if tile is safe to enter, returns False if it is not, fires if it contains an obstacle, then returns True'''
         if direction == game.UP:
-            radar_result = game.radar(game.position[0],game.position[1]-1)
+            radar_result = game.radar(game.position[0], game.position[1] - 1)
         elif direction == game.DOWN:
-            radar_result = game.radar(game.position[0],game.position[1]+1)
+            radar_result = game.radar(game.position[0], game.position[1] + 1)
         elif direction == game.RIGHT:
-            radar_result = game.radar(game.position[0]+1,game.position[1])
+            radar_result = game.radar(game.position[0] + 1, game.position[1])
         elif direction == game.LEFT:
-            radar_result = game.radar(game.position[0]-1,game.position[1])
+            radar_result = game.radar(game.position[0] - 1, game.position[1])
         else:
             print('{0} is not a valid direction'.format(direction))
             return False
 
-        print('Vann looks {0} and sees {1} and {2}'.format(direction,radar_result[0],radar_result[1]))
-        if radar_result[0] in [game.GRASS, game.DIRT, game.PLAIN]:  #all safe tiles
+        print('Vann looks {0} and sees {1} and {2}'.format(direction, radar_result[0], radar_result[1]))
+        if radar_result[0] in [game.GRASS, game.DIRT, game.PLAIN]:  # all safe tiles
             if radar_result[1] == None:
                 return True
             else:
-                self.face(game,direction)
+                self.face(game, direction)
                 self.shoot(game)
                 return True
         else:
             return False
 
-    def move_x(self,game):
+    def move_x(self, game):
         if game.tank_positions[0][0] > game.position[0]:
-            if self.tile_safe(game,game.RIGHT):
-                self.face(game,game.RIGHT)
+            if self.tile_safe(game, game.RIGHT):
+                self.face(game, game.RIGHT)
                 print('Vann moving Right')
                 self.forward(game)
                 print("Vann's commands are {0}".format(game.memory))
             else:
-                self.face(game,game.RIGHT)
+                self.face(game, game.RIGHT)
                 self.shoot(game)
                 print("Vann's commands are {0}".format(game.memory))
 
@@ -81,61 +82,59 @@ class Intelligence(object):
             self.shoot(game)
             print("Vann's commands are {0}".format(game.memory))
 
-
-    def face(self,game,direction):
-        ''' This function checks to see if tank is already facing direction (UP,DOWN,LEFT,RIGHT) and if not it changes direction, if it is, it does nothing. Also filters to make sure it only has one such command in queue.
-        '''
+    def face(self, game, direction):
+        '''This function checks to see if tank is already facing direction (UP,DOWN,LEFT,RIGHT) and if not it changes direction, if it is, it does nothing. Also filters to make sure it only has one such command in queue.'''
         if game.facing == direction:
             pass
         else:
             if direction not in game.memory:
                 game.face(direction)
 
-    def forward(self,game):
-        ''' This function wraps the game.forward() function in an attempt to prevent the command queue from filling up.  It checks to see if a command already exists to perform an action before adding it again'''
+    def forward(self, game):
+        '''This function wraps the game.forward() function in an attempt to prevent the command queue from filling up.  It checks to see if a command already exists to perform an action before adding it again'''
         if game.FORWARD not in game.memory:
             game.forward()
         else:
             print('Already queued')
 
-    def shoot(self,game):
-        ''' This function wraps the game.shoot() function in an attempt to prevent the command queue from filling up.  It checks to see if a command already exists to perform an action before adding it again'''
+    def shoot(self, game):
+        '''This function wraps the game.shoot() function in an attempt to prevent the command queue from filling up.  It checks to see if a command already exists to perform an action before adding it again'''
         if game.SHOOT not in game.memory:
             game.shoot()
         else:
             print('Already queued')
 
-    def get_action(self,game):
-        ''' This is where the real logic goes- what does the tank do?'''
+    def get_action(self, game):
+        '''This is where the real logic goes- what does the tank do?'''
         if game.tank_states[0] == game.DEAD:
             print('Vann Won, the other tank is deader than a doornail!')
-	else:
+        else:
             print(game.tank_states)
-            game.forget() #used to clear possibly old commands before issuing new ones
+            game.forget()  # used to clear possibly old commands before issuing new ones
             if game.tank_positions[0][0] == game.position[0]:
                 if game.tank_positions[0][1] > game.position[1]:
-                    self.face(game,game.DOWN)
+                    self.face(game, game.DOWN)
                     self.shoot(game)
                     print("Vann's commands are {0}".format(game.memory))
                 else:
-                    self.face(game,game.UP)
+                    self.face(game, game.UP)
                     self.shoot(game)
                     print("Vann's commands are {0}".format(game.memory))
 
             elif game.tank_positions[0][1] == game.position[1]:
                 if game.tank_positions[0][0] > game.position[0]:
-                    self.face(game,game.RIGHT)
+                    self.face(game, game.RIGHT)
                     self.shoot(game)
                     print("Vann's commands are {0}".format(game.memory))
                 else:
-                    self.face(game,game.LEFT)
+                    self.face(game, game.LEFT)
                     self.shoot(game)
                     print("Vann's commands are {0}".format(game.memory))
 
             else:
                 if game.tank_positions[0][1] > game.position[1]:
-                    if self.tile_safe(game,game.DOWN):
-                        self.face(game,game.DOWN)
+                    if self.tile_safe(game, game.DOWN):
+                        self.face(game, game.DOWN)
                         print('Vann moving DOWN')
                         self.forward(game)
                         print("Vann's commands are {0}".format(game.memory))
@@ -143,8 +142,8 @@ class Intelligence(object):
                         self.move_x(game)
 
                 elif game.tank_positions[0][1] < game.position[1]:
-                    if self.tile_safe(game,game.UP):
-                        self.face(game,game.UP)
+                    if self.tile_safe(game, game.UP):
+                        self.face(game, game.UP)
                         print('Vann moving UP')
                         self.forward(game)
                         print("Vann's commands are {0}".format(game.memory))
@@ -152,16 +151,10 @@ class Intelligence(object):
                         self.move_x(game)
 
 
-
 # create an instance of intelligence
 
 my_brain = Intelligence()
+
+
 def think(game):
-
     my_brain.get_action(game)
-
-
-
-
-
-
