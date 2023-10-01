@@ -87,7 +87,7 @@ if __name__ == '__main__':
     colors = colors[:num_tanks]
 
     def modname(color, filename):
-        return f'{color}_{os.path.basename(filename).replace(".py", "")}')
+        return f'{color}_{os.path.basename(filename).replace(".py", "")}'
 
     thinkers = zip(colors, args.thinkers)
     thinkers = [thinker_import(modname(col, f), f) for col, f in thinkers]
