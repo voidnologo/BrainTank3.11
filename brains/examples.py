@@ -88,8 +88,10 @@ def scan_map(game):
 
 
 done = False
-def think(game):
 
+
+def think(game):
+    global done
     if done:
         return
     color = game.color
@@ -118,6 +120,5 @@ def think(game):
     game.shoot()  # fire tank's weapon with current facing
     print('MEMORY:', game.memory)  # returns [symbol], a read only copy of queued commands
     scan_map(game)
-    global done
     done = True
-    # game.kill()  # self destruct tank
+    game.kill()  # self destruct tank

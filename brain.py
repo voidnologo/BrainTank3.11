@@ -133,6 +133,7 @@ def thinker_think(tank, thinker):
     game['direction'] = brain.direction()
     game['shots_fired'] = tank.shots
     game['state'] = tank.state
+    game['self'] = tank
 
     other_tanks = [x for x in world.tanks if x is not tank]
     game['tanks'] = [world.ITEM_TO_ENUM[x] for x in other_tanks]

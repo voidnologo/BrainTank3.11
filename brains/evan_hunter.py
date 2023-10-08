@@ -50,9 +50,28 @@ class Tile:
 
 
 def think(game):
-    if game.state == game.IDLE:
-        navigate(game)
-        chase(game)
+    chase(game)
+
+
+def chase(game):
+    print('memory (before):', game.memory)
+    relative_position = get_relative_position(game)
+
+    dodging = getattr(game.self, 'dodging', False)
+    if not dodging:
+        i_should_face = which_way_should_i_face(relative_position, game)
+        if i_should_face is not None:
+            game.face(i_should_face)
+            return
+    i_turn = can_i_move_forward(game)
+    if i_turn is not None:
+        game.self.dodging = True
+        game.face(i_turn)
+        return
+    else:
+        game.self.dodging = False
+        game.forward()
+        return
 
 
 def get_relative_position(game):
@@ -62,7 +81,10 @@ def get_relative_position(game):
     print('other tank', other_tank_position)
     print('our tank', our_tank_position)
 
+    # how far left <-> right they are to us
     relative_x = other_tank_position.x - our_tank_position.x
+
+    # how far up <-> down they are to us
     relative_y = other_tank_position.y - our_tank_position.y
 
     return Position(relative_x, relative_y)
@@ -82,36 +104,40 @@ def human_readable_relative(position, game):
     return Position(horizontal, vertical)
 
 
-def navigate(game):
+def tile_is_safe(tile, game):
+    bad_tiles = [game.WATER]
+
+    if tile.terrain in bad_tiles or tile.object is not None:
+        return False
+    return True
+
+
+def can_i_move_forward(game):
     our_tank_position = Position(*game.position)
     relative_position = get_relative_position(game)
     hrrel_pos = human_readable_relative(relative_position, game)
 
-    if game.facing == game.UP:
-        tile = Tile(*game.radar(our_tank_position.x, our_tank_position.y - 1))
-        if tile.terrain is not None:
-            game.face(hrrel_pos.x)
-    if game.facing == game.DOWN:
-        tile = Tile(*game.radar(our_tank_position.x, our_tank_position.y + 1))
-        if tile.terrain is not None:
-            game.face(hrrel_pos.x)
-    if game.facing == game.LEFT:
-        tile = Tile(*game.radar(our_tank_position.x - 1, our_tank_position.y))
-        if tile.terrain is not None:
-            game.face(hrrel_pos.y)
-    if game.facing == game.RIGHT:
-        tile = Tile(*game.radar(our_tank_position.x + 1, our_tank_position.y))
-        if tile.terrain is not None:
-            game.face(hrrel_pos.y)
+    # if I am facing ___ and cannot go forward, which way should I turn?
+    match game.facing:
+        case game.UP:
+            tile = Tile(*game.radar(our_tank_position.x, our_tank_position.y - 1))
+            if not tile_is_safe(tile, game):
+                return hrrel_pos.x
+        case game.DOWN:
+            tile = Tile(*game.radar(our_tank_position.x, our_tank_position.y + 1))
+            if not tile_is_safe(tile, game):
+                return hrrel_pos.x
+        case game.LEFT:
+            tile = Tile(*game.radar(our_tank_position.x - 1, our_tank_position.y))
+            if not tile_is_safe(tile, game):
+                return hrrel_pos.y
+        case game.RIGHT:
+            tile = Tile(*game.radar(our_tank_position.x + 1, our_tank_position.y))
+            if not tile_is_safe(tile, game):
+                return hrrel_pos.y
 
-    game.forward()
 
-
-def chase(game):
-    print('memory (before):', game.memory)
-
-    relative_position = get_relative_position(game)
-
+def which_way_should_i_face(relative_position, game):
     # which way should we face
     new_facing = None
     if abs(relative_position.x) > abs(relative_position.y):
@@ -138,9 +164,4 @@ def chase(game):
                 new_facing = game.UP
 
     if new_facing != game.facing:
-        game.face(new_facing)
-
-    # move in that direction
-    game.forward()
-
-    print('memory (after):', game.memory)
+        return new_facing
